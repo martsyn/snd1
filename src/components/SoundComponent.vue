@@ -1,47 +1,36 @@
 <script setup lang="ts">
-function onPlayClicked(){
-  const ctx = new AudioContext();
-  const oscillator = ctx.createOscillator();
-  const gainNode = ctx.createGain();
+import HarmonicSynth from '@/sound/HarmonicSynth.ts'
+import { ref } from 'vue'
+import FrequencyVisualizer from '@/components/FrequencyVisualizer.vue'
 
-  const initialVolume = 0.2
-  const duration = 5
+const playing = ref(false)
+const done = ref(false)
+const ctx = new AudioContext()
+const harmonicPlayer = new HarmonicSynth(ctx)
 
-  const baseFrequency = 200
+function onPlayClicked() {
+  playing.value = true
+  harmonicPlayer.start()
+}
 
-  const ratios =
-
-  // Set initial values
-  oscillator.frequency.setValueAtTime(200, ctx.currentTime);
-  gainNode.gain.setValueAtTime(initialVolume, ctx.currentTime);
-
-  // Schedule parameter changes
-  oscillator.frequency.linearRampToValueAtTime(2000, ctx.currentTime + duration);
-  gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
-
-  // Connect nodes
-  oscillator.connect(gainNode);
-  gainNode.connect(ctx.destination);
-
-  // Start the oscillator
-  oscillator.start();
-
-  // Auto-stop after duration (plus a small buffer)
-  const stopTime = ctx.currentTime + duration + 0.05;
-  oscillator.stop(stopTime);
-
-  // Return function to stop prematurely if needed
-  return () => {
-    oscillator.stop();
-    oscillator.disconnect();
-    gainNode.disconnect();
-  };}
+function onStopClicked() {
+  harmonicPlayer.stop()
+  playing.value = false
+  done.value = false
+}
 </script>
 
 <template>
-<button @click="onPlayClicked">Play</button>
+  <button v-if="!playing" @click="onPlayClicked">Play</button>
+  <button v-else @click="onStopClicked">Stop</button>
+  <div v-if="playing && !done">
+    Press the Done button when you the pitch stops growing
+    <button @click="done = true">Done</button>
+  </div>
+  <div v-else-if="playing && done">
+    You fail
+    <FrequencyVisualizer :audio-context="ctx" :source-node="harmonicPlayer.merger" />
+  </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
