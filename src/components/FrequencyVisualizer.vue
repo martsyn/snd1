@@ -16,7 +16,7 @@ const props = withDefaults(
     smoothingFactor?: number
   }>(),
   {
-    maxFrequency: 3520,
+    maxFrequency: 7040,
     minFrequency: 20,
     barCount: 128,
     barGap: 1,
@@ -46,7 +46,7 @@ const dataArray = ref<Uint8Array | null>(null)
 
 const setupAnalyser = () => {
   analyserNode.value = props.audioContext.createAnalyser()
-  analyserNode.value.fftSize = 2048 // Higher resolution for smoother visualization
+  analyserNode.value.fftSize = 4096 // Higher resolution for smoother visualization
   analyserNode.value.maxDecibels = -10
   analyserNode.value.minDecibels = -90
   analyserNode.value.smoothingTimeConstant = props.smoothingFactor

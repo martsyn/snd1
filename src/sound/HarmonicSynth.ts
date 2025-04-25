@@ -1,8 +1,8 @@
-const duration = 16
-const harmonicCount = 4
+const duration = 32
+const harmonicCount = 7
 
 // 110 220 440 880 1760
-const startFrequency = 110
+const startFrequency = 27.5
 const endFrequency = 1760
 
 export default class HarmonicSynth {

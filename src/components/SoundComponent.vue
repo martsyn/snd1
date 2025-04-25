@@ -21,14 +21,20 @@ function onStopClicked() {
 </script>
 
 <template>
-  <button v-if="!playing" @click="onPlayClicked">Play</button>
-  <button v-else @click="onStopClicked">Stop</button>
+  <div v-if="!playing">
+    <p>Turn on your sound and press Play</p>
+    <button @click="onPlayClicked">Play</button>
+  </div>
+  <div v-else>
+    <p>Here we go. It starts slow...</p>
+    <button @click="onStopClicked">Stop</button>
+  </div>
   <div v-if="playing && !done">
-    Press the Done button when you the pitch stops growing
+    <p>Press Done when you hear the pitch stops growing</p>
     <button @click="done = true">Done</button>
   </div>
   <div v-else-if="playing && done">
-    You fail
+    <p>You fail</p>
     <FrequencyVisualizer :audio-context="ctx" :source-node="harmonicPlayer.merger" />
   </div>
 </template>
