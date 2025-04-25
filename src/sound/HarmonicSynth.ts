@@ -11,6 +11,7 @@ export default class HarmonicSynth {
   private oscillators: OscillatorNode[] = []
   private gainNodes: GainNode[] = []
   private isPlaying = false
+  private nextOscIdx = 0
   private timer: number | undefined
 
   constructor(ctx: AudioContext) {
@@ -23,15 +24,8 @@ export default class HarmonicSynth {
     if (this.isPlaying) return
     this.isPlaying = true
 
-    let idx = 0
-    this.timer = window.setInterval(
-      () => {
-        this.scheduleOsc(idx)
-        ++idx
-        if (idx >= harmonicCount) idx = 0
-      },
-      (duration * 1000) / harmonicCount,
-    )
+    this.timer = window.setInterval(() => this.scheduleNextOsc(), (duration * 1000) / harmonicCount)
+    this.scheduleNextOsc()
   }
 
   stop(): void {
@@ -43,6 +37,12 @@ export default class HarmonicSynth {
     this.gainNodes = []
     window.clearInterval(this.timer)
     this.timer = undefined
+  }
+
+  private scheduleNextOsc() {
+    this.scheduleOsc(this.nextOscIdx)
+    ++this.nextOscIdx
+    if (this.nextOscIdx >= harmonicCount) this.nextOscIdx = 0
   }
 
   private scheduleOsc(idx: number) {
